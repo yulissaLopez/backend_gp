@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,9 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #MyApps
+    'users',
+
     #DRF
     'rest_framework',
     'rest_framework_simplejwt',
+    # allows to maintain a list of revoke or expired tokens
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -126,14 +132,26 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'users.CustomUser'
 REST_FRAMEWORK = {
-    # Permite el acceso de solo lectura a usuarios no autenticados
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
+    # # Permite el acceso de solo lectura a usuarios no autenticados
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ],
     # Configuracion para la autenticacion mediante Simple JWT
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
     
+}
+
+SIMPLE_JWT = {
+    # sets the timelife of the access token
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),
+    # Sets the lifetime of the refresh token 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=50),
+    # controls whether refresh tokens that have been rotated are blacklisted
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
 }
