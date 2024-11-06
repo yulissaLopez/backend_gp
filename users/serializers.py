@@ -27,10 +27,9 @@ class UserSerializer(serializers.ModelSerializer):
 
         print(validated_data['email'])
         try:
-            user = CustomUser.objects.create(email=validated_data['email'],
-                                                name=validated_data['name'])
-            user.set_password(validated_data['password'])
-            user.save()
+            user = CustomUser.objects.create_user(email=validated_data['email'],
+                                                name=validated_data['name'],
+                                                password=validated_data['password'])
             return user
         except IntegrityError:
             self.fail("email", "Este correo electrónico ya está registrado.")
