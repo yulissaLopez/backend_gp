@@ -10,14 +10,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "email", "name", 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate(self, data):
-        if 'email' in data:
-            data['email'] = data['email'].lower()
-        
-        if CustomUser.objects.filter(email=data['email']).exists():
+    
+    def validate_email(self, value):
+        # Covierte el email a LowerCase
+        norm_email = value.lower()
+
+        # TO DO REVISAR
+        if CustomUser.objects.filter(email=norm_email).exists():
             raise serializers.ValidationError("Este correo electrónico ya está registrado.")
         
-        return super().validate(data)
+        return norm_email
 
     def create(self, validated_data):
         print(validated_data['email'])

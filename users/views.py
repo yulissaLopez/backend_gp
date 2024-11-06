@@ -20,7 +20,8 @@ class RegisterView(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# Para Logearse    
+# Para Logearse  
+# TO DO CUSTOM TOKEN  
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:

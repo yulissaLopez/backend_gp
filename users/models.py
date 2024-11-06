@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 import uuid
 
 # Create your models here.
-
+# TO DO SEPARAR EN UN NUEVO ARCHIVO managers.py
 """ Esta clase maneja como se crean y gestion los usuarios """
 class UserManager(BaseUserManager):
 
@@ -45,7 +45,8 @@ class UserManager(BaseUserManager):
             raise ValueError('el atributo is_superuser debe ser True')
         
         return self.create_user(email, password, **extra_fields)
-    
+
+# MODELO  
 class CustomUser(AbstractUser):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -59,6 +60,7 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default= False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    # TO DO REVISAR ESTE CAMPO PARA VERIFICACION DE USUARIO DE A TRAVES DEL CORREO
     is_verified = models.BooleanField(default=False)
 
     """indica que utilice el UserManager para interactuar con las instancias del modelo"""
@@ -70,3 +72,5 @@ class CustomUser(AbstractUser):
 
     def __str__(self) :
         return self.name
+
+#REVISAR EL USO DE BASEABSTRACTUSER
