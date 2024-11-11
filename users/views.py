@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import CustomUser
 
+
 # Create your views here.
 class RegisterView(APIView):
 
