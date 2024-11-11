@@ -9,7 +9,7 @@ class CustomUser(AbstractBaseUser):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=False)
-    email = models.EmailField(max_length=100, unique=True)
+    email = models.EmailField(max_length=100, unique=True, error_messages={'unique' : 'Este Correo electronico ya esta registrado'})
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     # TODO REVISAR ESTE CAMPO PARA VERIFICACION DE USUARIO DE A TRAVES DEL CORREO

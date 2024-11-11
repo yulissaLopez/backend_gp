@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import CustomUser
 from django.db import IntegrityError
 
@@ -15,24 +16,16 @@ class UserSerializer(serializers.ModelSerializer):
         # Covierte el email a LowerCase
         norm_email = value.lower()
         print(norm_email, value)
-        # TO DO REVISAR
-        if CustomUser.objects.filter(email=norm_email).exists():
-            raise serializers.ValidationError("Este correo electrónico ya está registrado.")
+
+        # Revisa si el email ya existe email__ixact es un filtro que busca sin tener en cuenta mayusculas y/o minusculas
+        if CustomUser.objects.filter(email__iexact=norm_email).exists():
+            raise ValidationError("Este correo electrónico ya está registrado.")
         
         return norm_email
 
     def create(self, validated_data):
-        email = validated_data['email']
-        validated_data['email']=email.lower()
-
-        print(validated_data['email'])
-        try:
-            user = CustomUser.objects.create_user(email=validated_data['email'],
-                                                name=validated_data['name'],
-                                                password=validated_data['password'])
-            return user
-        except IntegrityError:
-            self.fail("email", "Este correo electrónico ya está registrado.")
+        user = CustomUser.objects.create_user(**validated_data)
+        return user
 
     
     
