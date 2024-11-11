@@ -1,25 +1,17 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
+from users.models import CustomUser
 from .serializers import UserSerializer
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from .models import CustomUser
+from rest_framework import (
+    generics
+)
 
 # Create your views here.
-class RegisterView(APIView):
-
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Para Logearse  
 # TO DO CUSTOM TOKEN  
@@ -31,10 +23,3 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             raise AuthenticationFailed("Las credenciales proporcionadas no son correctas.")
         return response
 
-class UserList(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format = None):
-        user = CustomUser.objects.all()
-        serializer = UserSerializer(user, many = True)
-        return Response(serializer.data, status= status.HTTP_200_OK)

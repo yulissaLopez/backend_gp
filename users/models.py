@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils import timezone
 import uuid
+
 
 # Create your models here.
 # TO DO SEPARAR EN UN NUEVO ARCHIVO managers.py
@@ -47,30 +49,24 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 # MODELO  
-class CustomUser(AbstractUser):
-
+class CustomUser(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = None
     name = models.CharField(max_length=100, unique=False)
-
-    email = models.EmailField(max_length=100, unique=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default= False)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    email = models.EmailField(max_length=100, unique=True, error_messages={'unique': "Este correo electrónico ya está registrado."})
     # TO DO REVISAR ESTE CAMPO PARA VERIFICACION DE USUARIO DE A TRAVES DEL CORREO
-    is_verified = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+
+    """ Le indica a django que se usara el email en lugar del username en la autenticacion"""
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     """indica que utilice el UserManager para interactuar con las instancias del modelo"""
     objects = UserManager()
 
-    """ Le indica a django que se usara el email en lugar del username en la autenticacion"""
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
-
     def __str__(self) :
-        return self.name
+        return self.email
 
 #REVISAR EL USO DE BASEABSTRACTUSER

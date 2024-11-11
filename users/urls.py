@@ -1,14 +1,25 @@
 from django.urls import path
-from .views import RegisterView, CustomTokenObtainPairView, UserList
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from users.models import CustomUser
+from users.serializers import UserSerializer
+from .views import RegisterView, CustomTokenObtainPairView
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
     # TokenObtainPairView
 )
+from rest_framework.generics import CreateAPIView
 
 urlpatterns = [
-    path('', UserList.as_view(), name='user_list'),
-    path('register/', RegisterView.as_view(), name = "sign_up"),
+    path(
+        'register/',
+        CreateAPIView.as_view(
+            queryset=CustomUser.objects.all(),
+            serializer_class=UserSerializer
+        ),
+        name='sign_up'
+    ),
     #Authentication
-    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
